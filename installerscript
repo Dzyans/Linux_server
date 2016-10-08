@@ -1,0 +1,39 @@
+#!/bin/bash
+
+devel1=Thor
+devel2=Magnus
+validChoice=0
+
+#Maybe we should have a shitload of whileloops for invalid userinput, but that is for later
+
+
+echo "Welcome to $devel1 and $devel2 software installer"
+echo
+echo Please input the full name of the package to be installed[Enter]
+read pckNm
+
+nrMatchingPkg=$(dpkg -l yelp | grep -o -w $pckNm | wc -w) #Checking to see if package is already installe. Here we could use ^$pckNm$ instead
+if [ $nrMatchingPkg -ls 1 ]; then 
+	echo good to go
+else
+	echo nogoy
+fi
+while [ $validChoice = 0 ]
+do
+  echo Install software from sourcecode press 1
+  echo Install software from dpkg/rpm press 2
+  echo
+  echo 1 or 2[Enter]:
+  read choice
+	
+  if [ $choice = "1" ]; then
+    validChoice=1
+    echo "using sourcecode"
+  elif [ $choice = "2" ]; then
+    validChoice=1
+    echo "using dpkg/rpm"
+  else
+    echo bad input
+  fi
+done
+
