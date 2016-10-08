@@ -10,14 +10,26 @@ validChoice=0
 echo "Welcome to $devel1 and $devel2 software installer"
 echo
 echo Please input the full name of the package to be installed[Enter]
-read pckNm
+read pkgNm
 
-nrMatchingPkg=$(dpkg -l yelp | grep -o -w $pckNm | wc -w) #Checking to see if package is already installe. Here we could use ^$pckNm$ instead
-if [ $nrMatchingPkg -ls 1 ]; then 
-	echo good to go
+MatchingPkg=$(dpkg-query -l $pkgNm) #query installed packages
+exitCode=$? #checking exitcode to see if package is know, exit code 0 is for good query
+echo $exitCode
+echo $MatchingPkg
+if [ $exitCode = 0 ]; then
+  isInstalled=$(echo $MatchingPkg | grep ii -o -w| wc -w)
+  echo $isInstalled
+  if [ $isInstalled -eq 0 ]; then
+    echo good to go
+  else
+    echo package already installed
+    exit 1
+  fi
 else
-	echo nogoy
+  echo shieeet
+  
 fi
+#Asking user to choose pdkg or use of make install
 while [ $validChoice = 0 ]
 do
   echo Install software from sourcecode press 1
@@ -35,5 +47,11 @@ do
   else
     echo bad input
   fi
+
+#Prompting for direkt link
+echo Please input direkt link to package
+read direktLink
+
+$direktLink | wget /usr/local/src
 done
 
