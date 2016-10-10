@@ -1,0 +1,65 @@
+#!/bin/bash
+
+devel1=Thor
+devel2=Magnus
+validChoice=0
+
+#Maybe we should have a shitload of whileloops for invalid userinput, but that is for later
+
+
+echo "Welcome to $devel2 and $devel1 software installer"
+echo
+echo Please input the full name of the package to be installed[Enter]
+read pkgNm
+
+MatchingPkg=$(dpkg-query -l $pkgNm) #query installed packages
+exitCode=$? #checking exitcode to see if package is known, exit code 0 is for good query
+#echo $exitCode
+#echo $MatchingPkg
+if [ $exitCode = 0 ]; then
+  isInstalled=$(echo $MatchingPkg | grep ii -o -w| wc -w)
+  #echo $isInstalled
+  if [ $isInstalled -eq 0 ]; then
+    echo package recognised
+  else
+    echo package already installed
+    exit 1
+  fi
+else
+  echo Unknown package... ... ... 
+fi
+export pkgNm
+echo proceeding with installation
+echo 
+echo
+#Asking user to choose pdkg or use of make install
+while [ $validChoice = 0 ]
+do
+  echo Install software from sourcecode press 1
+  echo Install software from dpkg/rpm press 2
+  echo
+  echo 1 or 2[Enter]:
+  read choice
+	
+  if [ $choice = "1" ]; then
+    validChoice=1
+    echo "using sourcecode"
+  elif [ $choice = "2" ]; then
+    validChoice=2
+    echo "using dpkg/rpm"
+  else
+    echo bad input
+  fi
+done
+#Prompting for direkt link
+echo Please input direkt link to package[Enter]
+read directLink
+export directLink
+
+if [ $choice = "1" ]; then
+	./sourcecodeInstaller
+elif [ $choice = "2" ]; then
+	./debInstaller
+fi
+
+
