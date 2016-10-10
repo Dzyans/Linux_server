@@ -3,6 +3,9 @@
 
 #Script for installing package via deb installer, using wget
 
+CYAN='\033[0;36m'
+RED='\033[0;31m'
+
 echo $directLink
 echo $pkgNm
 
@@ -10,32 +13,39 @@ wget $directLink -P /usr/local/src
 exitCode=$?
 
 if [ $exitCode = "0" ]; then #wget succesfull
-	echo 'wget was successfull proceeding to install'
+	echo -e "${CYAN}wget was successfull proceeding to install"
+	tput sgr0
 	cd /usr/local/src
 	debPackageName=$(ls | grep $pkgNm)
-	echo $debPackageName
+	#echo $debPackageName
 	dpkg -i $debPackageName
 	exitCode=$?
 	if [ $exitCode = "1" ]; then #something went wrong, prolly dependencies
-		echo 'Something went wrong, trying to sovle dependencies'
+		echo -e "${RED}Something went wrong, trying to sovle dependencies"
+		tput sgr0		
 		apt-get install -f
 		dpkg -i $debPackageName
 		exitCode=$?
 		if [ $exitCode = "1" ]; then
-			echo "still unable to install. Manual installation needed."
+			echo -e "${RED}still unable to install. Manual installation needed."
 			echo "removing and purging package debree"
+			tput sgr0
 			apt-get remove $pkgNm --purge $pkgNm
 			exitCode=$?
 			if [ $exitCode = "0" ]; then
-				echo "cleanup succesfull"
+				echo -e "${CYAN}cleanup succesfull"
 				echo "good luck with manual installation"
+				tput sgr0
 			else
-				echo "fatal error!! Cleanup failed"
+				echo -e "${RED}fatal error!! Cleanup failed"
+				tput sgr0
 			fi
 		fi
 	else
-		echo "installation succesfull"	
+		echo -e "${CYAN}installation succesfull"
+		tput sgr0	
 	fi
 else 
-	echo 'wget unsuccessfull'
+	echo -e "${RED}wget unsuccessfull"
+	tput sgr0
 fi
