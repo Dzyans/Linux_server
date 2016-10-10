@@ -1,0 +1,41 @@
+#!/bin/bash
+
+
+#Script for installing package via deb installer, using wget
+
+echo $directLink
+echo $pkgNm
+
+wget $directLink -P /usr/local/src
+exitCode=$?
+
+if [ $exitCode = "0" ]; then #wget succesfull
+	echo 'wget was successfull proceeding to install'
+	cd /usr/local/src
+	debPackageName=$(ls | grep $pkgNm)
+	echo $debPackageName
+	dpkg -i $debPackageName
+	exitCode=$?
+	if [ $exitCode = "1" ]; then #something went wrong, prolly dependencies
+		echo 'Something went wrong, trying to sovle dependencies'
+		apt-get install -f
+		dpkg -i $debPackageName
+		exitCode=$?
+		if [ $exitCode = "1" ]; then
+			echo "still unable to install. Manual installation needed."
+			echo "removing and purging package debree"
+			apt-get remove $pkgNm --purge $pkgNm
+			exitCode=$?
+			if [ $exitCode = "0" ]; then
+				echo "cleanup succesfull"
+				echo "good luck with manual installation"
+			else
+				echo "fatal error!! Cleanup failed"
+			fi
+		fi
+	else
+		echo "installation succesfull"	
+	fi
+else 
+	echo 'wget unsuccessfull'
+fi
