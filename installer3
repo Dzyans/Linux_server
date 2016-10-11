@@ -1,0 +1,89 @@
+#!/bin/bash
+
+devel1=Thor
+devel2=Magnus
+validChoice=0
+privilegeChanged=0
+CYAN='\033[0;36m'
+RED='\033[0;31m'
+#Maybe we should have a shitload of whileloops for invalid userinput, but that is for later
+
+echo
+echo -----------------------------------------------------------------
+echo -e "${CYAN}Welcome to $devel2 and $devel1 software installer"
+tput sgr0
+echo ------------------------------------------------------------------
+echo
+#Asking user to choose pdkg or use of make install
+while [ $validChoice = 0 ]
+do
+  echo Install software from sourcecode press 1
+  echo Install software from dpkg/rpm press 2
+  echo
+  echo 1 or 2[Enter]:
+  read choice
+	
+  if [ $choice = "1" ]; then
+    validChoice=1
+    echo -e "${CYAN}using sourcecode"
+  elif [ $choice = "2" ]; then
+    validChoice=2
+    echo -e "${CYAN}using dpkg/rpm"
+tput sgr0
+echo Please input the full name of the package to be installed[Enter]
+read pkgNm
+
+MatchingPkg=$(dpkg-query -l $pkgNm) #query installed packages
+exitCode=$? #checking exitcode to see if package is known, exit code 0 is for good query
+#echo $exitCode
+#echo $MatchingPkg
+echo
+if [ $exitCode = 0 ]; then
+  isInstalled=$(echo $MatchingPkg | grep ii -o -w| wc -w)
+  #echo $isInstalled
+  if [ $isInstalled -eq 0 ]; then
+    echo -e "${CYAN}package recognised, and it is not yet installed"
+  else
+    echo -e "${RED}package already installed"
+    exit 0
+  fi
+else
+  echo -e "${CYAN}Unknown package... ... ..." 
+fi
+export pkgNm
+echo  -e "${CYAN}proceeding with installation"
+echo 
+echo
+tput sgr0
+  else
+    echo -e "${RED}bad input"
+tput sgr0
+  fi
+done
+tput sgr0
+#Prompting for direkt link
+echo Please input direkt link to package[Enter]
+read directLink
+export directLink
+
+perm=$(stat -c %A /usr/local/src | cut -b 9)
+
+if [ $perm = "-" ]; then
+	priviligeChanged=1
+	echo -e "${CYAN}missing write privilege for /usr/local/src"
+	echo 'setting up permission'
+	chmod o+w /usr/local/src
+	tput sgr0
+ 
+fi
+if [ $choice = "1" ]; then
+	./sourcecodeInstaller
+elif [ $choice = "2" ]; then
+	./debInstaller
+fi
+
+if [ $privilegeChanged = "1" ]; then
+	echo "-e ${CYAN}reverting write privilege"
+	chmod o-w /usr/local/src
+	tput srg0
+fi
