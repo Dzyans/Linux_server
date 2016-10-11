@@ -18,7 +18,7 @@ echo
 while [ $validChoice = 0 ]
 do
   echo Install software from sourcecode press 1
-  echo Install software from dpkg/rpm press 2
+  echo Install software from dpkg press 2
   echo
   echo 1 or 2[Enter]:
   read choice
