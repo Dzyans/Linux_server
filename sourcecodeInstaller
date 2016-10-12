@@ -82,3 +82,4 @@ elif [ $exitCode = "1" ]; then #make install failed
 	echo -e "${RED}Something went wrong, installation failed"
 	tput sgr0
 fi
+exit
