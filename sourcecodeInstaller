@@ -13,24 +13,21 @@ echo -e "${CYAN}Install from Source Code:"
 tput sgr0
 echo ------------------------------------------------------------------
 echo
-#Asking user to choose package source
 
-tput sgr0
-read directLink
-export directLink
-
+echo $pkgNm
 echo $directLink
 wget $directLink -P /usr/local/src
 
 #Decompress the downloaded tarball
 echo  -e "${CYAN}Decompressing the downloaded tarball.."
 tput sgr0
-bzip2 -cd <PACKAGE_NAME>.tar.bz2
+bzip2 -cd ls | grep pkgNm | cut -d "." -f 2
 
 
 #Change into the newly created directory
-cd usr/local/src/<PACKAGE_NAME>
-
+cd $(ls | grep pkgNm)
+echo  "Changed dir to:"
+pwd
 
 #Configure the build system
 echo  -e "${CYAN}configure: creating ./config.status.."
@@ -38,7 +35,7 @@ tput sgr0
 ./configure
  
 #Build package
-echo  "$Building package.."
+echo  "Building package.."
 tput sgr0
 make
 
