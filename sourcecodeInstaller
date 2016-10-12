@@ -6,7 +6,7 @@ validChoice=0
 privilegeChanged=0
 CYAN='\033[0;36m'
 RED='\033[0;31m'
-
+pkgNm=nmap #for devel
 echo
 echo -----------------------------------------------------------------
 echo -e "${CYAN}Install from Source Code:"
@@ -16,23 +16,36 @@ echo
 
 echo $pkgNm
 echo $directLink
-wget $directLink -P /usr/local/src
+#wget $directLink -P /usr/local/src
 
 #Decompress the downloaded tarball
 echo  -e "${CYAN}Decompressing the downloaded tarball.."
 tput sgr0
-bzip2 -d $pkgNm | cut -d "." -f 2
+cd /usr/local/src
+filename=$(ls | grep $pkgNm)
+filetype=$(cut $filename -d "." -f 3)
+echo $filename
+echo $filetype
+#if [ $filetype = "bz2" ]; then
+tar -xvf $filename
+#else 
+#echo "cannot find file, or unsupported archive type"
+#fi
+#bzip2 -d $pkgNm | cut -d "." -f 2
 
 
 #Change into the newly created directory
-cd $(ls | grep pkgNm)
+newpath=$(ls -d */ | grep $pkgNm)
+echo $newpath
+realpath="/usr/local/src/$newpath"
+cd $realpath
 echo  "Changed dir to:"
 pwd
 
 #Configure the build system
 echo  -e "${CYAN}configure: creating ./config.status.."
 tput sgr0
-./configure $pkgNm
+./configure #$pkgNm
  
 #Build package
 echo  "Building package.."
@@ -46,11 +59,12 @@ if [ $exitCode = "0" ]; then #make succesfull
 	echo "Build was successfull! Proceeding.."
 	tput sgr0
 elif [ $exitCode = "1" ]; then #make failed
-	echo -e "${RED}Something went wrong, trying to sovle dependencies"
+	echo -e "${RED}Something went wrong"
+	tput sgr0
 
-
+fi
 #Become a privileged user for system-wide install
-su root
+#su root
 
 
 #Install package
