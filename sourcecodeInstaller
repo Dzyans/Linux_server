@@ -6,7 +6,7 @@ validChoice=0
 privilegeChanged=0
 CYAN='\033[0;36m'
 RED='\033[0;31m'
-pkgNm=nmap #for devel
+
 echo
 echo -----------------------------------------------------------------
 echo -e "${CYAN}Install from Source Code:"
@@ -16,7 +16,7 @@ echo
 
 echo $pkgNm
 echo $directLink
-#wget $directLink -P /usr/local/src
+wget $directLink -P /usr/local/src
 
 #Decompress the downloaded tarball
 echo  -e "${CYAN}Decompressing the downloaded tarball.."
