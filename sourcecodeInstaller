@@ -21,7 +21,7 @@ wget $directLink -P /usr/local/src
 #Decompress the downloaded tarball
 echo  -e "${CYAN}Decompressing the downloaded tarball.."
 tput sgr0
-bzip2 -cd ls | grep pkgNm | cut -d "." -f 2
+bzip2 -d $pkgNm | cut -d "." -f 2
 
 
 #Change into the newly created directory
@@ -32,7 +32,7 @@ pwd
 #Configure the build system
 echo  -e "${CYAN}configure: creating ./config.status.."
 tput sgr0
-./configure
+./configure $pkgNm
  
 #Build package
 echo  "Building package.."
@@ -68,8 +68,3 @@ elif [ $exitCode = "1" ]; then #make install failed
 	echo -e "${RED}Something went wrong, installation failed"
 	tput sgr0
 fi
-
-
-
-
-
